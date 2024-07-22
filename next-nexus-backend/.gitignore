@@ -1,0 +1,12 @@
+node_modules
+# Keep environment variables out of version control
+.env.dev
+.env.prod
+.env
+/prisma/migrations
+yarn.lock
+package-lock.json
+
+/src/certs/jwtRS256.key
+/src/certs/jwtRS256.pub
+
