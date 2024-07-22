@@ -1,12 +1,6 @@
-<p style="font-size: 32px;" align="center">
-Next Nexus App
-</p>
+# Next Nexus App
 
-#
-
-<p align="center">
- <a aria-label="License" href="https://github.com/vercel/next.js/blob/canary/license.md"><img alt="" src="https://img.shields.io/npm/l/next.svg?style=for-the-badge&labelColor=000000"></a>
-</p>
+<a aria-label="License" href="https://github.com/vercel/next.js/blob/canary/license.md"><img alt="" src="https://img.shields.io/npm/l/next.svg?style=for-the-badge&labelColor=000000"></a>
 
 # Getting Started
 
