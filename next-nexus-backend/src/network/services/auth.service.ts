@@ -94,7 +94,7 @@ class AuthService {
   }
 
   /**
-   * Description placeholder
+   * Validates and returns the user associated with the provided JWT.
    *
    * @public
    * @async
