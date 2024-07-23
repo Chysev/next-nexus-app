@@ -22,6 +22,7 @@ Next Nexus App is a comprehensive production-ready application starter template 
 ### Next Nexus App v3
 
 - User List
+- User Upload Profile (Cloudinary)
 - Admin Page
 - Email Service
 - User Forgot Password
