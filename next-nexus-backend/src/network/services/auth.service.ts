@@ -1,11 +1,14 @@
-import Jwt from "@/lib/Jwt";
+import Jwt from "@/lib/jwt";
+import jose from "node-jose";
 import prisma from "@/prisma";
 import passport from "passport";
 import Bcrypt from "@/lib/bcrypt.";
+import { promises as promisefs } from "fs";
 import { RegisterDTO } from "@/validators/auth.dto";
 import { NextFunction, Request, Response } from "@/types/express-types";
 
 class AuthService {
+  public keyStore = jose.JWK.createKeyStore();
   /**
    * Handles user login using passport authentication and generates a JWT if authentication is successful.
    *
@@ -37,12 +40,36 @@ class AuthService {
             if (err) {
               reject(err);
             }
+
+            const keyJSON = await promisefs.readFile(
+              "./src/keys/key.json",
+              "utf8"
+            );
+
+            const key = await this.keyStore.add(JSON.parse(keyJSON));
+
+            const encryptedToken = await jose.JWE.createEncrypt(
+              { format: "compact" },
+              key
+            )
+              .update(
+                JSON.stringify({
+                  id: user?.id,
+                })
+              )
+              .final();
+
             const token = Jwt.generateToken(
               {
-                id: user?.id,
-                email: user?.email,
+                encryptedToken: encryptedToken,
               },
-              "7d"
+              "7d",
+              {
+                issuer: "Next-Nexus-App",
+                audience: "auth-service",
+                subject: user.id,
+                clockTolerance: 60,
+              }
             );
 
             resolve({ sessionToken: token });
@@ -89,8 +116,12 @@ class AuthService {
     };
   }
 
-  public async logout() {
-    return;
+  public async logout(res: Response) {
+    res.clearCookie("sessionToken");
+
+    return {
+      message: "Success",
+    };
   }
 
   /**
