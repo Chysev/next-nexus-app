@@ -1,8 +1,8 @@
 import Api from "@/lib/api";
 import { HttpStatusCode } from "axios";
+import { HttpInternalServerError } from "@/lib/error";
 import AuthService from "@/network/services/auth.service";
 import { Request, Response, NextFunction } from "@/types/express-types";
-import { HttpInternalServerError, HttpUnAuthorizedError } from "@/lib/error";
 
 class AuthController extends Api {
   private readonly authService = new AuthService();
@@ -27,7 +27,7 @@ class AuthController extends Api {
 
   public Logout = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const auth = await this.authService.logout();
+      const auth = await this.authService.logout(res);
       this.send(res, auth, HttpStatusCode.Ok, "Logout Route");
     } catch (error) {
       next(new HttpInternalServerError("Failed to logout"));
