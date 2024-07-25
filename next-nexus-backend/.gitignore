@@ -10,3 +10,4 @@ package-lock.json
 /src/certs/jwtRS256.key
 /src/certs/jwtRS256.pub
 
+/src/keys/*.json
