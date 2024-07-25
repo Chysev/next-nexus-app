@@ -1,16 +1,20 @@
-import prisma from "@/prisma";
-import Bcrypt from "@/lib/bcrypt.";
-import passport from "passport";
-import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
-import { Strategy as LocalStrategy } from "passport-local";
 import fs from "fs";
+import jose from "node-jose";
+import prisma from "@/prisma";
+import passport from "passport";
+import Bcrypt from "@/lib/bcrypt.";
+import { promises as promisefs } from "fs";
+import { Strategy as LocalStrategy } from "passport-local";
+import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt";
 
-const privateKey = fs.readFileSync(
+const publicKey = fs.readFileSync(
   "../next-nexus-backend/src/certs/jwtRS256.pub",
   "utf8"
 );
 
 class PassportConfig {
+  public keyStore = jose.JWK.createKeyStore();
+
   public initialize() {
     this.setupLocalStrategy();
     this.setupJwtStrategy();
@@ -54,13 +58,26 @@ class PassportConfig {
       new JwtStrategy(
         {
           jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-          secretOrKey: privateKey,
+          secretOrKey: publicKey,
           algorithms: ["RS256"],
         },
         async (jwtPayload: any, done) => {
+          const keyJSON = await promisefs.readFile(
+            "./src/keys/key.json",
+            "utf8"
+          );
+
+          const key = await this.keyStore.add(JSON.parse(keyJSON));
+
+          const decryptedToken = await jose.JWE.createDecrypt(key).decrypt(
+            jwtPayload.encryptedToken
+          );
+
+          const payload = JSON.parse(decryptedToken.plaintext.toString());
+
           try {
             const account = await prisma.account.findUnique({
-              where: { id: jwtPayload?.id },
+              where: { id: payload?.id },
             });
 
             if (!account) {
