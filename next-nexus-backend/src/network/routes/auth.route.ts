@@ -66,7 +66,7 @@ auth
  *       500:
  *         description: Internal server error
  */
-auth.route("/logout").get(controller.Login);
+auth.route("/logout").get(controller.Logout);
 
 /**
  * @swagger
