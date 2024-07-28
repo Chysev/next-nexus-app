@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { RegisterDTO } from "@/validators/auth.dto";
+import { LoginDTO, RegisterDTO } from "@/validators/auth.dto";
 import { ExpressRouter } from "@/types/express-types";
 import RequestValidator from "@/middleware/validator";
 import AuthController from "../controllers/auth.controller";
@@ -18,19 +18,16 @@ const controller = new AuthController();
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *               password:
- *                 type: string
+ *             $ref: '#/components/schemas/LoginDTO'
  *     responses:
  *       200:
  *         description: Successful login
  *       500:
  *         description: Internal server error
  */
-auth.route("/login").post(controller.Login);
+auth
+  .route("/login")
+  .post(RequestValidator.validate(LoginDTO), controller.Login);
 
 /**
  * @swagger
@@ -70,10 +67,19 @@ auth.route("/logout").get(controller.Logout);
 
 /**
  * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *
  * /auth/session-token:
  *   get:
  *     summary: Get a new session token
  *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Session token created successfully
