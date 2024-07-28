@@ -1,14 +1,11 @@
-import Jwt from "@/lib/jwt";
-import jose from "node-jose";
 import prisma from "@/prisma";
 import passport from "passport";
 import Bcrypt from "@/lib/bcrypt.";
-import { promises as promisefs } from "fs";
+import joseJwt from "@/lib/jose-jwt";
 import { RegisterDTO } from "@/validators/auth.dto";
 import { NextFunction, Request, Response } from "@/types/express-types";
 
 class AuthService {
-  public keyStore = jose.JWK.createKeyStore();
   /**
    * Handles user login using passport authentication and generates a JWT if authentication is successful.
    *
@@ -41,31 +38,24 @@ class AuthService {
               reject(err);
             }
 
-            const keyJSON = await promisefs.readFile(
-              "./src/keys/key.json",
-              "utf8"
+            const encryptedToken = await joseJwt.encryptToken(
+              { id: user.id },
+              "30d",
+              {
+                issuer: "next-nexus-app",
+                audience: "auth-service",
+                subject: user.id,
+                clockTolerance: 60,
+              }
             );
 
-            const key = await this.keyStore.add(JSON.parse(keyJSON));
-
-            const encryptedToken = await jose.JWE.createEncrypt(
-              { format: "compact" },
-              key
-            )
-              .update(
-                JSON.stringify({
-                  id: user?.id,
-                })
-              )
-              .final();
-
-            const token = Jwt.generateToken(
+            const token = await joseJwt.generateToken(
               {
                 encryptedToken: encryptedToken,
               },
-              "7d",
+              "30d",
               {
-                issuer: "Next-Nexus-App",
+                issuer: "next-nexus-app",
                 audience: "auth-service",
                 subject: user.id,
                 clockTolerance: 60,
