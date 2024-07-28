@@ -9,11 +9,13 @@ import config from "./config/config";
 import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./config/swagger";
-import PassportConfig from "./config/passport";
+import { PassportConfig } from "./config/passport";
 import { Request, Response, NextFunction } from "@/types/express-types";
 
 class index {
   public app: express.Application;
+
+  public passportConfig = new PassportConfig();
 
   constructor() {
     this.app = express();
@@ -63,7 +65,7 @@ class index {
   }
 
   private PassportSetup(): void {
-    this.app.use(PassportConfig.initialize());
+    this.app.use(this.passportConfig.initialize());
   }
 
   private MediaRoutes(): void {
