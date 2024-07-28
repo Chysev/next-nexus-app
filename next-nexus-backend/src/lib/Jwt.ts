@@ -1,32 +1,24 @@
-import fs from "fs";
-import jwt from "jsonwebtoken";
+import { sign, verify } from "jsonwebtoken";
 
-const privateKey = fs.readFileSync(
-  "../next-nexus-backend/src/certs/jwtRS256.key"
-);
-
-const publicKey = fs.readFileSync(
-  "../next-nexus-backend/src/certs/jwtRS256.pub"
-);
-
-class Jwt {
+export class jwt {
   /**
-   * Generates a JSON Web Token (JWT) with the specified payload, expiration time, and options.
+   * Generates a JSON Web Token (JWT) with the specified payload and options.
    *
    * @public
+   * @static
    * @param {Record<string, any>} payload
    * @param {string} expiresIn
    * @param {JwtOptions} [options={}]
-   * @param {Record<string, any>} [claims={}]
+   * @param {Record<string, any>} [claims={}] -
    * @returns {string}
    */
-  public generateToken(
+  public static generateToken(
     payload: Record<string, any>,
     expiresIn: string,
     options: JwtOptions = {},
     claims: Record<string, any> = {}
   ): string {
-    return jwt.sign({ ...payload, ...claims }, privateKey, {
+    return sign({ ...payload, ...claims }, process.env.JWT_PRIVATE_KEY, {
       algorithm: "RS256",
       expiresIn: expiresIn,
       issuer: options.issuer,
@@ -39,16 +31,17 @@ class Jwt {
    * Verifies the authenticity and validity of a JWT.
    *
    * @public
+   * @static
    * @param {string} sessionToken
    * @param {JwtOptions} [options={}]
    * @returns {(Record<string, any> | null)}
    */
-  public verifyToken(
+  public static verifyToken(
     sessionToken: string,
     options: JwtOptions = {}
   ): Record<string, any> | null {
     try {
-      return jwt.verify(sessionToken, publicKey, {
+      return verify(sessionToken, process.env.JWT_PUBLIC_KEY, {
         algorithms: ["RS256"],
         issuer: options.issuer,
         audience: options.audience,
@@ -64,12 +57,13 @@ class Jwt {
    * Refreshes an expired JWT by generating a new token with the same payload.
    *
    * @public
+   * @static
    * @param {string} sessionToken
    * @param {string} expiresIn
    * @param {JwtOptions} [options={}]
    * @returns {(string | null)}
    */
-  public refreshToken(
+  public static refreshToken(
     sessionToken: string,
     expiresIn: string,
     options: JwtOptions = {}
@@ -83,4 +77,4 @@ class Jwt {
   }
 }
 
-export default new Jwt();
+export default jwt;
