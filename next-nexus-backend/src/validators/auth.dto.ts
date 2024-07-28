@@ -32,4 +32,29 @@ class RegisterDTO {
   password: string;
 }
 
-export { RegisterDTO };
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     LoginDTO:
+ *       type: object
+ *       required:
+ *         - name
+ *         - password
+ *       properties:
+ *         name:
+ *           type: string
+ *         password:
+ *           type: string
+ */
+class LoginDTO {
+  @IsString()
+  @IsNotEmpty()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
+
+export { RegisterDTO, LoginDTO };
