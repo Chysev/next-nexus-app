@@ -16,10 +16,7 @@ const Login = async (datas: z.infer<typeof LoginSchema>) => {
         message: error.response.data.message,
       };
     }
-    return {
-      status: 500,
-      message: "INTERNAL_SERVER_ERROR",
-    };
+    return new NextResponse("INTERNAL_SERVER_ERROR", { status: 500 });
   }
 };
 
