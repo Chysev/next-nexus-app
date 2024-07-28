@@ -6,8 +6,5 @@ node_modules
 /prisma/migrations
 yarn.lock
 package-lock.json
+/build
 
-/src/certs/jwtRS256.key
-/src/certs/jwtRS256.pub
-
-/src/keys/*.json
