@@ -1,4 +1,4 @@
-# Next Nexus App
+# Next Nexus App - v2
 
 <a aria-label="License" href="https://github.com/Chysev/next-nexus-app/blob/main/README.md"><img alt="" src="https://img.shields.io/npm/l/next.svg?style=for-the-badge&labelColor=000000"></a>
 
@@ -13,11 +13,6 @@ Next Nexus App is a comprehensive production-ready application starter template 
 - User Registration - Users can sign up for an account by providing a unique username and a secure password.
 - User Login - Registered users can log in using their credentials.
 - User Logout - Users can securely log out of their accounts.
-
-### Next Nexus App v2
-
-- Docker - Automated deployment
-- JSON Web Encryption - Extra security layer
 
 ### Next Nexus App v3
 
