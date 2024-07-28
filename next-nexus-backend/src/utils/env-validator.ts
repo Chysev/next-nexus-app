@@ -1,11 +1,11 @@
 import { config } from "dotenv";
 
-if (process.env.NODE_ENV === "production") {
-  config({ path: ".env.prod" });
-  console.log("Loaded Production Envornment Variables");
-} else if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV === "development") {
   config({ path: ".env.dev" });
   console.log("Loaded Development Envornment Variables");
+} else if (process.env.NODE_ENV === "production") {
+  config({ path: ".env.prod" });
+  console.log("Loaded Production Envornment Variables");
 }
 
 export = () => {
