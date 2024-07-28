@@ -14,7 +14,10 @@ export = () => {
     "FRONTEND_BASE_URL",
     "BACKEND_BASE_URL",
     "DATABASE_URL",
-    "JWT_SECRET",
+    "JOSE_PRIVATE_KEY",
+    "JOSE_PUBLIC_KEY",
+    "JWT_PRIVATE_KEY",
+    "JWT_PUBLIC_KEY",
   ];
 
   const missingVariables = requiredVariables.filter(
@@ -30,11 +33,6 @@ export = () => {
 
   if (isNaN(Number(process.env.BACKEND_PORT))) {
     console.error("PORT must be a number");
-    process.exit(1);
-  }
-
-  if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
-    console.error("SECRET must be at least 32 characters long");
     process.exit(1);
   }
 
