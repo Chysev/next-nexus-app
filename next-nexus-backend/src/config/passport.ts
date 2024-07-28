@@ -1,20 +1,12 @@
-import fs from "fs";
-import jose from "node-jose";
 import prisma from "@/prisma";
 import passport from "passport";
+import "../utils/env-validator";
 import Bcrypt from "@/lib/bcrypt.";
-import { promises as promisefs } from "fs";
+import joseJwt from "@/lib/jose-jwt";
 import { Strategy as LocalStrategy } from "passport-local";
 import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt";
 
-const publicKey = fs.readFileSync(
-  "../next-nexus-backend/src/certs/jwtRS256.pub",
-  "utf8"
-);
-
-class PassportConfig {
-  public keyStore = jose.JWK.createKeyStore();
-
+export class PassportConfig {
   public initialize() {
     this.setupLocalStrategy();
     this.setupJwtStrategy();
@@ -58,26 +50,24 @@ class PassportConfig {
       new JwtStrategy(
         {
           jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-          secretOrKey: publicKey,
+          // Change this into JWT_PUBLIC_KEY if you used jwt.ts to generate token
+          secretOrKey: process.env.JOSE_PUBLIC_KEY as string,
           algorithms: ["RS256"],
         },
         async (jwtPayload: any, done) => {
-          const keyJSON = await promisefs.readFile(
-            "./src/keys/key.json",
-            "utf8"
-          );
-
-          const key = await this.keyStore.add(JSON.parse(keyJSON));
-
-          const decryptedToken = await jose.JWE.createDecrypt(key).decrypt(
+          const decryptedToken = await joseJwt.decryptToken(
             jwtPayload.encryptedToken
           );
 
-          const payload = JSON.parse(decryptedToken.plaintext.toString());
+          if (!decryptedToken) {
+            return done(null, false, {
+              message: "Decryption failed or invalid token",
+            });
+          }
 
           try {
             const account = await prisma.account.findUnique({
-              where: { id: payload?.id },
+              where: { id: decryptedToken?.payload.id as any },
             });
 
             if (!account) {
@@ -107,4 +97,4 @@ class PassportConfig {
   }
 }
 
-export default new PassportConfig();
+export default PassportConfig;
