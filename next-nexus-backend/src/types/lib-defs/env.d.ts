@@ -9,6 +9,10 @@ declare global {
       BACKEND_BASE_URL: string;
       JWT_SECRET: string;
       DATABASE_URL: string;
+      JOSE_PRIVATE_KEY: string;
+      JOSE_PUBLIC_KEY: string;
+      JWT_PRIVATE_KEY: string;
+      JWT_PUBLIC_KEY: string;
     }
   }
 }
