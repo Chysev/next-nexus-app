@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 
 import "../globals.css";
 import { Lato } from "next/font/google";
-import Header from "@/components/dashboard/Header";
+import useToken from "@/hooks/use-token";
+import Header from "./components/Header";
 import QueryProvider from "@/hooks/QueryProvider";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -20,11 +21,13 @@ const RootLayout = ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
+  const Token = useToken();
+  const { sessionToken } = Token as { sessionToken: string };
   return (
     <html lang="en">
       <body className={`${lato.className}`}>
         <QueryProvider>
-          <Header />
+          <Header sessionToken={sessionToken} />
           {children}
           <Toaster />
         </QueryProvider>
