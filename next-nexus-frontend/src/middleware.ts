@@ -1,5 +1,5 @@
-import Axios from "./lib/Axios";
-import useToken from "./hooks/use-token";
+import Axios from "@/lib/Axios";
+import useToken from "@/hooks/use-token";
 import { NextRequest, NextResponse } from "next/server";
 
 const adminPaths = ["/dashboard", "/dashboard/settings/account/[id]"];
