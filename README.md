@@ -10,9 +10,8 @@ Next Nexus App is a comprehensive production-ready application starter template 
 
 ### FEATURES
 
-- User Registration - Users can sign up for an account by providing a unique username and a secure password.
-- User Login - Registered users can log in using their credentials.
-- User Logout - Users can securely log out of their accounts.
+- User Authentication (JWT & JWE) - Secure token-based authentication with JSON Web Tokens (JWT) and encrypted tokens using JSON Web Encryption (JWE).
+- Docker - Containerized application setup for consistent development and deployment.
 
 ### Next Nexus App v3
 
