@@ -12,3 +12,8 @@ type JwtOptions = {
   subject?: string;
   clockTolerance?: number;
 };
+
+declare module "*.json" {
+  const value: any;
+  export default value;
+}
