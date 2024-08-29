@@ -1,9 +1,12 @@
 "use server";
-
+import {
+  LoginSchema,
+  RegisterSchema,
+  ForgotResetPasswordSchema,
+} from "@/validators";
 import { z } from "zod";
 import Axios from "@/lib/Axios";
 import { NextResponse } from "next/server";
-import { LoginSchema, RegisterSchema } from "@/validators";
 
 const Login = async (datas: z.infer<typeof LoginSchema>) => {
   try {
@@ -30,4 +33,16 @@ const Register = async (datas: z.infer<typeof RegisterSchema>) => {
   }
 };
 
-export { Login, Register };
+const ForgotResetPassword = async (
+  datas: z.infer<typeof ForgotResetPasswordSchema>
+) => {
+  try {
+    const response = await Axios.post("/api/v1/auth/forgot-password", datas);
+
+    return response.data;
+  } catch (error) {
+    return new NextResponse("INTERNAL_SERVER_ERROR", { status: 500 });
+  }
+};
+
+export { Login, Register, ForgotResetPassword };
