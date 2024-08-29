@@ -27,16 +27,20 @@ import { IsNotEmpty, IsOptional, IsString } from "class-validator";
  */
 class UpdateUserDTO {
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   name: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   email: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   password: string;
+
+  @IsString()
+  @IsOptional()
+  role: "USER" | "ADMIN" | "MODERATOR";
 
   @IsString()
   @IsOptional()
@@ -47,4 +51,24 @@ class UpdateUserDTO {
   avatarUrl: string;
 }
 
-export { UpdateUserDTO };
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     DeleteUserDTO:
+ *       type: object
+ *       required:
+ *         - id
+ *         - email
+ *         - password
+ *       properties:
+ *         id:
+ *           type: string
+ */
+class DeleteUserDTO {
+  @IsString()
+  @IsNotEmpty()
+  id: string;
+}
+
+export { UpdateUserDTO, DeleteUserDTO };

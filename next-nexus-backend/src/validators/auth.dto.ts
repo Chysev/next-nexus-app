@@ -57,4 +57,40 @@ class LoginDTO {
   password: string;
 }
 
-export { RegisterDTO, LoginDTO };
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     ForgotPasswordDTO:
+ *       type: object
+ *       required:
+ *         - email
+ *       properties:
+ *         email:
+ *           type: string
+ */
+class ForgotPasswordDTO {
+  @IsString()
+  @IsNotEmpty()
+  email: string;
+}
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     ForgotPasswordDTO:
+ *       type: object
+ *       required:
+ *         - password
+ *       properties:
+ *         password:
+ *           type: string
+ */
+class ResetPasswordDTO {
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
+
+export { RegisterDTO, LoginDTO, ForgotPasswordDTO, ResetPasswordDTO };
