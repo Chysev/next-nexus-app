@@ -1,4 +1,3 @@
-# Stage 1: Base
 FROM node:18-alpine AS base
 
 FROM base AS deps
@@ -29,15 +28,37 @@ FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
+ENV BACKEND_PORT 5000
+ENV BACKEND_BASE_URL http://localhost:5000
+ENV FRONTEND_BASE_URL http://localhost:3000
+
+ENV DATABASE_URL mysql://root:@localhost:3306/next-horizon-app
+
+ENV REDIS_URL redis://localhost:6379
+
+ENV CLOUDINARY_NAME YourCloudinaryName
+ENV CLOUDINARY_KEY YourCloudinaryKey
+ENV CLOUDINARY_SECRET YourCloudinarySecret
+
+ENV NEXUS_KEY YourNexusKey
+
+ENV JOSE_PRIVATE_KEY="YourJosePrivateKey"
+ENV JOSE_PUBLIC_KEY="YourJosePublicKey"
+ENV JWT_PRIVATE_KEY="YourJWTPrivateKey"
+ENV JWT_PUBLIC_KEY="YourJWTPublicKey"
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 NextNexusBackend
 
-COPY --from=builder /app/build ./build
-COPY --from=builder /app/prisma ./prisma
+RUN mkdir build
+RUN chown NextNexusBackend:nodejs build
+
+COPY --from=builder --chown=NextNexusBackend:nodejs /app/build ./
+COPY .env.prod ./app/build
+COPY --from=builder --chown=NextNexusBackend:nodejs /app/prisma ./prisma
 
 USER NextNexusBackend
 
 EXPOSE 5000
 
-CMD ["node", "build/server.js"]
+CMD ["node", "build/cluster.js"]
