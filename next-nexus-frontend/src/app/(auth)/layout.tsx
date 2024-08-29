@@ -2,6 +2,7 @@ import "../globals.css";
 import type { Metadata } from "next";
 import { Lato } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
+import QueryProvider from "@/hooks/QueryProvider";
 
 const lato = Lato({ subsets: ["latin"], weight: "400" });
 
@@ -18,7 +19,7 @@ const RootLayout = ({
   return (
     <html lang="en">
       <body className={lato.className}>
-        {children}
+        <QueryProvider>{children}</QueryProvider>
         <Toaster />
       </body>
     </html>
