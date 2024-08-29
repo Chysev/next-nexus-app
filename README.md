@@ -1,4 +1,4 @@
-# Next Nexus App - v2
+# Next Nexus App - version nexus.30f4a
 
 <a aria-label="License" href="https://github.com/Chysev/next-nexus-app/blob/main/README.md"><img alt="" src="https://img.shields.io/npm/l/next.svg?style=for-the-badge&labelColor=000000"></a>
 
@@ -12,17 +12,16 @@ Next Nexus App is a comprehensive production-ready application starter template 
 
 - User Authentication (JWT & JWE) - Secure token-based authentication with JSON Web Tokens (JWT) and encrypted tokens using JSON Web Encryption (JWE).
 - Docker - Containerized application setup for consistent development and deployment.
+- User Management:
+  - User List
+  - User Profile
+- Admin Dashboard - Manage application settings and users through an intuitive admin interface.
+- Email Service - Automated email functionality for user notifications and communication.
+- Password Recovery - User forgot password functionality to securely reset passwords.
 
-### Next Nexus App v3
+### Upcoming in version nexus.9338c
 
-- User List
-- User Upload Profile (Cloudinary)
-- Admin Page
-- Email Service
-- User Forgot Password
-
-### Next Nexus App v4
-
+- User Permissions
 - Paypal Integration
 - PayMongo Integration
 
