@@ -5,11 +5,12 @@ import morgan from "morgan";
 import nocache from "nocache";
 import express from "express";
 import router from "./network";
-import config from "./config/config";
+import config from "./config/app/config";
 import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
-import swaggerSpec from "./config/swagger";
-import { PassportConfig } from "./config/passport";
+import session from "./middleware/session";
+import swaggerSpec from "./config/app/swagger";
+import { PassportConfig } from "./config/app/passport";
 import { Request, Response, NextFunction } from "@/types/express-types";
 
 class index {
@@ -28,6 +29,7 @@ class index {
 
   private Middleware(): void {
     this.app.use(helmet());
+    this.app.use(session);
     this.app.use(nocache());
     this.app.use(express.json());
     this.app.use(morgan("dev"));
@@ -36,25 +38,7 @@ class index {
     this.app.set("views", "views");
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
-    this.app.set("trust proxy", true);
-
-    this.app.use((req: Request, res: Response, next: NextFunction) => {
-      let userIP: string | undefined;
-
-      const forwardedFor = req.headers["x-forwarded-for"] as string | undefined;
-      if (forwardedFor) {
-        userIP = forwardedFor.split(",")[0];
-      } else if (req.socket.remoteAddress) {
-        userIP = req.socket.remoteAddress;
-      }
-
-      if (userIP === "::1") {
-        userIP = "127.0.0.1";
-      }
-
-      (req as any).userIP = userIP;
-      next();
-    });
+    this.app.set("trust proxy", false);
 
     this.app.use(
       cors({
