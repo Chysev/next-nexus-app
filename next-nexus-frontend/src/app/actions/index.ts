@@ -1,10 +1,10 @@
 "use server";
 
 import { z } from "zod";
-import { Login } from "../api/auth";
-import { cookies } from "next/headers";
 import { AxiosResponse } from "axios";
+import { cookies } from "next/headers";
 import { LoginSchema } from "@/validators";
+import { Login } from "../api/auth/index.s";
 
 const SetTokenAction = async (datas: z.infer<typeof LoginSchema>) => {
   const response = await Login(datas);
