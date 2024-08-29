@@ -16,20 +16,22 @@ import {
 } from "@/components/ui/card";
 import { z } from "zod";
 import Link from "next/link";
-import { useState } from "react";
-import { Register } from "@/app/api/auth";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { RegisterSchema } from "@/validators";
 import { Button } from "@/components/ui/button";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { Register } from "@/app/api/auth/index.s";
 import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useLoadingState, useShowPasswordState } from "@/state/states";
 
 const RegisterForm = () => {
   const { toast } = useToast();
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+
+  const { data: showPassword, setData: setShowPassword } =
+    useShowPasswordState();
+  const { data: isLoading, setData: setIsLoading } = useLoadingState();
 
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
@@ -133,7 +135,7 @@ const RegisterForm = () => {
           </CardContent>
           <CardFooter className="flex flex-col space-y-2">
             <Button
-              disabled={isLoading}
+              disabled={isLoading as boolean}
               className="w-full"
               variant="default"
               type="submit"

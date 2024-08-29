@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/form";
 import { z } from "zod";
 import Link from "next/link";
-import { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { LoginSchema } from "@/validators";
@@ -27,12 +26,15 @@ import { SetTokenAction } from "@/app/actions";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useLoadingState, useShowPasswordState } from "@/state/states";
 
 const LoginForm = () => {
-  const { toast } = useToast();
   const router = useRouter();
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
+  const { data: showPassword, setData: setShowPassword } =
+    useShowPasswordState();
+  const { data: isLoading, setData: setIsLoading } = useLoadingState();
 
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
@@ -129,12 +131,12 @@ const LoginForm = () => {
               )}
             />
             <p className="text-md text-right hover:underline">
-              <Link href="/credentials/forgot-password">Forgot Password?</Link>
+              <Link href="/account/forgot-password">Forgot Password?</Link>
             </p>
           </CardContent>
           <CardFooter className="flex flex-col space-y-2">
             <Button
-              disabled={isLoading}
+              disabled={isLoading as boolean}
               className="w-full"
               variant="default"
               type="submit"
