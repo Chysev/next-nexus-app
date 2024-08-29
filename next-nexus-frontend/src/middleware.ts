@@ -2,11 +2,20 @@ import Axios from "@/lib/Axios";
 import useToken from "@/hooks/use-token";
 import { NextRequest, NextResponse } from "next/server";
 
-const adminPaths = ["/dashboard", "/dashboard/settings/account/[id]"];
+const userPaths = ["/dashboard", "/dashboard/settings/account/:id"];
 
-const AuthPaths = ["/authorize/login", "/authorize/register"];
+const adminPaths = [
+  "/dashboard/admin",
+  "/dashboard/admin/users",
+  "/dashboard/admin/users/:id",
+  "/dashboard/admin/permissions",
+  "/dashboard/admin/config/mail",
+  "/dashboard/admin/config/payment/gateway",
+];
 
-const auth = async (req: NextRequest) => {
+const authPaths = ["/authorize/login", "/authorize/register"];
+
+const auth = async () => {
   try {
     const Token = useToken();
 
@@ -21,20 +30,26 @@ const auth = async (req: NextRequest) => {
   }
 };
 
-export async function middleware(req: NextRequest) {
+export const middleware = async (req: NextRequest) => {
   const { pathname } = req.nextUrl;
   const Token = req.cookies.get("sessionToken");
 
   if (pathname.startsWith("/authorize/logout")) {
     const res = NextResponse.redirect(new URL("/authorize/login", req.url));
     res.cookies.delete("sessionToken");
-
     return res;
   }
 
   try {
-    const response = await auth(req);
-    if (AuthPaths.some((path) => pathname.startsWith(path))) {
+    const response = await auth();
+
+    if (adminPaths.some((path) => pathname.startsWith(path))) {
+      if (response.data.data.user.role === "USER") {
+        const res = NextResponse.redirect(new URL("/dashboard", req.url));
+        return res;
+      }
+    }
+    if (authPaths.some((path) => pathname.startsWith(path))) {
       if (Token) {
         if (response.status === 200) {
           return NextResponse.redirect(new URL("/dashboard", req.url));
@@ -42,7 +57,7 @@ export async function middleware(req: NextRequest) {
       }
     }
   } catch (error: any) {
-    if (adminPaths.some((path) => pathname.startsWith(path))) {
+    if (userPaths.some((path) => pathname.startsWith(path))) {
       if (!Token) {
         if (error.response?.status === 401) {
           return NextResponse.redirect(new URL("/authorize/login", req.url));
@@ -51,7 +66,7 @@ export async function middleware(req: NextRequest) {
     }
   }
   return NextResponse.next();
-}
+};
 
 export const config = {
   matcher: ["/((?!api|_next/static|.*\\..*|_next/image|$).*)"],
