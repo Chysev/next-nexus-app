@@ -1,7 +1,13 @@
+import {
+  LoginDTO,
+  RegisterDTO,
+  ResetPasswordDTO,
+  ForgotPasswordDTO,
+} from "@/validators/auth.dto";
 import { Router } from "express";
-import { LoginDTO, RegisterDTO } from "@/validators/auth.dto";
 import { ExpressRouter } from "@/types/express-types";
 import RequestValidator from "@/middleware/validator";
+import { authRateLimiter } from "@/middleware/rateLimit";
 import AuthController from "../controllers/auth.controller";
 
 const auth: ExpressRouter = Router();
@@ -22,12 +28,14 @@ const controller = new AuthController();
  *     responses:
  *       200:
  *         description: Successful login
+ *       401:
+ *         description: Unauthorized
  *       500:
  *         description: Internal server error
  */
 auth
   .route("/login")
-  .post(RequestValidator.validate(LoginDTO), controller.Login);
+  .post(authRateLimiter, RequestValidator.validate(LoginDTO), controller.Login);
 
 /**
  * @swagger
@@ -49,7 +57,11 @@ auth
  */
 auth
   .route("/register")
-  .post(RequestValidator.validate(RegisterDTO), controller.Register);
+  .post(
+    authRateLimiter,
+    RequestValidator.validate(RegisterDTO),
+    controller.Register
+  );
 
 /**
  * @swagger
@@ -87,5 +99,57 @@ auth.route("/logout").get(controller.Logout);
  *         description: Unauthorized
  */
 auth.route("/session-token").get(controller.SessionToken);
+
+/**
+ * @swagger
+ * /auth/forgot-password:
+ *   post:
+ *     summary: Mail a forgot password link to user's email
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ForgotPasswordDTO'
+ *     responses:
+ *       200:
+ *         description: Account created successfully
+ *       500:
+ *         description: Internal server error
+ */
+auth
+  .route("/forgot-password")
+  .post(
+    authRateLimiter,
+    RequestValidator.validate(ForgotPasswordDTO),
+    controller.ForgotPassword
+  );
+
+/**
+ * @swagger
+ * /auth/reset-password/:token:
+ *   post:
+ *     summary: Reset user's password using Token
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ResetPasswordDTO'
+ *     responses:
+ *       200:
+ *         description: Account created successfully
+ *       500:
+ *         description: Internal server error
+ */
+auth
+  .route("/reset-password/:token")
+  .post(
+    authRateLimiter,
+    RequestValidator.validate(ResetPasswordDTO),
+    controller.ResetPassword
+  );
 
 export default auth;

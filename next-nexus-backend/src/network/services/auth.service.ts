@@ -1,8 +1,14 @@
-import prisma from "@/prisma";
+import {
+  ForgotPasswordDTO,
+  RegisterDTO,
+  ResetPasswordDTO,
+} from "@/validators/auth.dto";
+import prisma from "@/lib/prisma";
 import passport from "passport";
-import Bcrypt from "@/lib/bcrypt.";
-import joseJwt from "@/lib/jose-jwt";
-import { RegisterDTO } from "@/validators/auth.dto";
+import Bcrypt from "@/lib/bcrypt";
+import { HttpNotFoundError } from "@/lib/error";
+import joseJwt, { josejwt } from "@/lib/jose-jwt";
+import createMailTransporter from "@/utils/mailer";
 import { NextFunction, Request, Response } from "@/types/express-types";
 
 class AuthService {
@@ -14,7 +20,7 @@ class AuthService {
    * @param {Request} req
    * @param {Response} res
    * @param {NextFunction} next
-   * @returns {Promise<authToken: string>}
+   * @returns {Promise<sessionToken: string>}
    */
   public async login(req: Request, res: Response, next: NextFunction) {
     return new Promise((resolve, reject) => {
@@ -39,7 +45,7 @@ class AuthService {
             }
 
             const encryptedToken = await joseJwt.encryptToken(
-              { id: user.id },
+              { id: user.id, role: user.role },
               "30d",
               {
                 issuer: "next-nexus-app",
@@ -74,10 +80,7 @@ class AuthService {
    *
    * @public
    * @async
-   * @param {Object} data
-   * @param {string} data.name
-   * @param {string} data.email
-   * @param {string} data.password
+   * @param {RegisterDTO} data
    * @returns {Promise<Object>}
    * @throws {Error}
    */
@@ -106,6 +109,14 @@ class AuthService {
     };
   }
 
+  /**
+   * Logs out the user by clearing the session token cookie.
+   *
+   * @public
+   * @async
+   * @param {Response} res
+   * @returns {Object}
+   */
   public async logout(res: Response) {
     res.clearCookie("sessionToken");
 
@@ -128,20 +139,93 @@ class AuthService {
     return new Promise((resolve, reject) => {
       passport.authenticate(
         "jwt",
-        { session: false },
+        { session: true },
         async (error: Error, user: User, info) => {
-          const userIP = (req as any).userIP;
-
           if (error || !user) {
             reject({
               status: 401,
-              message: `Authorization Bearer Token Missing From ${userIP}`,
+              message: "Authorization Bearer Token Missing",
             });
           }
 
           resolve({ user });
         }
       )(req, res, next);
+    });
+  }
+
+  /**
+   * Handles the forgot password functionality by sending a reset password link to the user's email.
+   *
+   * @public
+   * @async
+   * @param {ForgotPasswordDTO} data
+   * @returns {Promise<Object>}
+   * @throws {HttpNotFoundError}
+   */
+  public async ForgotPassword(data: ForgotPasswordDTO) {
+    const account = await prisma.account.findUnique({
+      where: { email: data.email },
+    });
+
+    if (!account) {
+      throw new HttpNotFoundError("Account not found");
+    }
+
+    const transporter = createMailTransporter();
+
+    const TokenParams = await josejwt.generateToken(
+      {
+        id: account.id,
+        email: account.email,
+        password: account.password,
+      },
+      "5m",
+      {
+        issuer: "next-nexus-app",
+        audience: "auth-service",
+        subject: account.id,
+        clockTolerance: 60,
+      }
+    );
+
+    transporter.sendMail({
+      from: process.env.NODEMAILER_EMAIL,
+      to: data.email,
+      subject: "Reset Password Link",
+      text: `http://localhost:3000/account/reset-password/${TokenParams}`,
+    });
+
+    return { TokenParams };
+  }
+
+  /**
+   * Resets the user's password using the provided token and new password.
+   *
+   * @public
+   * @async
+   * @param {ResetPasswordDTO} data
+   * @param {string} token
+   * @returns {Promise<Object>}
+   * @throws {HttpNotFoundError}
+   */
+  public async ResetPassword(data: ResetPasswordDTO, token: string) {
+    const TokenParams: any = await joseJwt.verifyToken(token, {
+      issuer: "next-nexus-app",
+      audience: "auth-service",
+    });
+
+    const email = TokenParams?.payload.email;
+
+    if (!email) {
+      throw new HttpNotFoundError("Account not found");
+    }
+
+    const hashedPassword = await Bcrypt.hashPassword(data.password);
+
+    return prisma.account.update({
+      where: { email: email },
+      data: { password: hashedPassword },
     });
   }
 }
