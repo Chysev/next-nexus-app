@@ -28,6 +28,9 @@ FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
+ENV PORT 3000
+ENV HOSTNAME 0.0.0.0
+ENV BACKEND_BASE_URL http://localhost:5000
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 NextNexusFrontend
@@ -35,16 +38,13 @@ RUN adduser --system --uid 1001 NextNexusFrontend
 COPY --from=builder /app/public ./public
 
 RUN mkdir .next
-RUN chown nextjs:nodejs .next
+RUN chown NextNexusFrontend:nodejs .next
 
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=NextNexusFrontend:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=NextNexusFrontend:nodejs /app/.next/static ./.next/static
 
 USER NextNexusFrontend
 
 EXPOSE 3000
-
-ENV PORT 3000
-ENV HOSTNAME 0.0.0.0
 
 CMD ["node", "server.js"]
