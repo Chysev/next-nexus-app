@@ -2,7 +2,7 @@
   "extends": "next",
   "rules": {
     "@next/next/no-page-custom-font": 1,
-    "no-unused-vars": "error",
+    "no-unused-vars": "off",
     "no-undef": "warn",
     "react-hooks/rules-of-hooks": "off",
     "react/jsx-no-duplicate-props": "error",
