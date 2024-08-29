@@ -1,7 +1,7 @@
-import prisma from "@/prisma";
+import "@/utils/env-validator";
 import passport from "passport";
-import "../utils/env-validator";
-import Bcrypt from "@/lib/bcrypt.";
+import prisma from "@/lib/prisma";
+import Bcrypt from "@/lib/bcrypt";
 import joseJwt from "@/lib/jose-jwt";
 import { Strategy as LocalStrategy } from "passport-local";
 import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt";

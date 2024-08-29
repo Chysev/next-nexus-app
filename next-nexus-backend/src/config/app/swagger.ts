@@ -1,6 +1,6 @@
-import swaggerJsDoc from "swagger-jsdoc";
 import path from "path";
 import config from "./config";
+import swaggerJsDoc from "swagger-jsdoc";
 
 const swaggerDefinition = {
   openapi: "3.0.0",
@@ -19,7 +19,7 @@ const swaggerDefinition = {
 
 const options = {
   swaggerDefinition,
-  apis: [path.join(__dirname, "../**/*.ts")],
+  apis: [path.join(__dirname, "../../**/*.ts")],
 };
 
 const swaggerSpec = swaggerJsDoc(options);
