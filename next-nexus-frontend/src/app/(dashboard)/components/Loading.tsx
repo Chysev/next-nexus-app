@@ -1,7 +1,21 @@
-"use client";
-import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+} from "@/components/ui/pagination";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-const Loading = () => {
+import { Skeleton } from "@/components/ui/skeleton";
+
+const UserCardLoading = () => {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="max-w-4xl w-full p-4 sm:p-6 lg:p-8">
@@ -24,4 +38,67 @@ const Loading = () => {
   );
 };
 
-export default Loading;
+const TableLoading = () => {
+  return (
+    <div className="flex justify-center items-center">
+      <div className="max-w-7xl w-full mt-36 px-2 overflow-x-auto">
+        <Table>
+          <TableCaption>
+            <Skeleton className="h-6 w-48 bg-gray-300 rounded" />
+          </TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px] text-lg">
+                <Skeleton className="h-8 w-full bg-gray-300 rounded" />
+              </TableHead>
+              <TableHead className="text-lg">
+                <Skeleton className="h-8 w-full bg-gray-300 rounded" />
+              </TableHead>
+              <TableHead className="text-lg">
+                <Skeleton className="h-8 w-full bg-gray-300 rounded" />
+              </TableHead>
+              <TableHead className="text-right text-lg">
+                <Skeleton className="h-8 w-full bg-gray-300 rounded" />
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {Array.from({ length: 5 }, (_, index) => (
+              <TableRow key={index}>
+                <TableCell className="font-medium">
+                  <Skeleton className="h-6 w-20 bg-gray-300 rounded" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-6 w-32 bg-gray-300 rounded" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-6 w-48 bg-gray-300 rounded" />
+                </TableCell>
+                <TableCell className="text-right">
+                  <Skeleton className="h-6 w-24 bg-gray-300 rounded" />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <Pagination className="flex justify-center items-center mt-4">
+          <PaginationContent className="flex space-x-1">
+            <PaginationItem>
+              <Skeleton className="h-8 w-12 bg-gray-300 rounded" />
+            </PaginationItem>
+            {Array.from({ length: 5 }, (_, index) => (
+              <PaginationItem key={index}>
+                <Skeleton className="h-8 w-8 bg-gray-300 rounded" />
+              </PaginationItem>
+            ))}
+            <PaginationItem>
+              <Skeleton className="h-8 w-12 bg-gray-300 rounded" />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </div>
+    </div>
+  );
+};
+
+export { UserCardLoading, TableLoading };

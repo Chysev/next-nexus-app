@@ -1,5 +1,3 @@
-import React from "react";
-
 const error = () => {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">

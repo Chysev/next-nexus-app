@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import UserData from "@/hooks/user-data";
+import UserData from "@/hooks/use-user-data";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
