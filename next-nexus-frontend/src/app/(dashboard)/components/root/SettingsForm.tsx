@@ -1,5 +1,10 @@
 "use client";
 import {
+  useEditState,
+  useShowPasswordState,
+  useUploadState,
+} from "@/state/states";
+import {
   Form,
   FormControl,
   FormField,
@@ -19,38 +24,53 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { z } from "zod";
-import Link from "next/link";
-import { useState } from "react";
+import { User } from "@/types";
+import Axios from "@/lib/Axios";
 import { FiX } from "react-icons/fi";
 import { FaEye } from "react-icons/fa";
-import { GoHome } from "react-icons/go";
-import UserData from "@/hooks/user-data";
 import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
 import { FaEyeSlash } from "react-icons/fa";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useDropzone } from "react-dropzone";
-import { UpdateUser } from "@/app/api/users/";
 import { MdFileUpload } from "react-icons/md";
 import { Input } from "@/components/ui/input";
+import useUserData from "@/hooks/use-user-data";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { UpdateUserDataSchema } from "@/validators";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { updateUser } from "@/app/api/users/index.c";
+import { UseQueryResult } from "@tanstack/react-query";
+import { IoArrowBackCircleOutline } from "react-icons/io5";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
-const Settings = ({ sessionToken }: { sessionToken: string }) => {
+const SettingsForm = ({ sessionToken }: { sessionToken: string }) => {
   const router = useRouter();
+
   const [avatar, setAvatar] = useState<string | ArrayBuffer | null>(null);
-  const [Edit, setEdit] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showUpload, setShowUpload] = useState(false);
+  const { data: Edit, setData: setEdit } = useEditState();
+  const { data: showPassword, setData: setShowPassword } =
+    useShowPasswordState();
+  const { data: showUpload, setData: setShowUpload } = useUploadState();
 
   const params = useParams();
 
-  const { data: user } = UserData(sessionToken, router);
+  const { data: user }: UseQueryResult<{ data: { user: User } }> = useUserData(
+    sessionToken,
+    router
+  );
 
   const form = useForm<z.infer<typeof UpdateUserDataSchema>>({
     resolver: zodResolver(UpdateUserDataSchema),
@@ -58,6 +78,8 @@ const Settings = ({ sessionToken }: { sessionToken: string }) => {
       name: "",
       email: "",
       password: "",
+      avatarUrl: "",
+      role: "",
       description: "",
     },
   });
@@ -66,16 +88,40 @@ const Settings = ({ sessionToken }: { sessionToken: string }) => {
     setShowPassword(!showPassword);
   };
 
-  const onDrop = (acceptedFiles: File[]) => {
+  const onDrop = async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     const reader = new FileReader();
+
+    const avatarUrl = await onUploadImage(file);
 
     reader.onload = () => {
       setAvatar(reader.result);
     };
 
     reader.readAsDataURL(file);
+
+    if (avatarUrl) {
+      setAvatar(avatarUrl);
+      form.setValue("avatarUrl", avatarUrl);
+    }
   };
+
+  useEffect(() => {
+    if (user) {
+      form.reset({
+        name: user?.data.user.name,
+        email: user?.data.user.email,
+        password: "",
+        avatarUrl: user?.data?.user?.avatarUrl,
+        role: user?.data?.user?.role,
+        description: user?.data.user.description,
+      });
+    }
+
+    if (user?.data?.user?.avatarUrl) {
+      setAvatar(user?.data?.user?.avatarUrl);
+    }
+  }, [user?.data?.user?.avatarUrl]);
 
   const {
     // getRootProps
@@ -87,11 +133,39 @@ const Settings = ({ sessionToken }: { sessionToken: string }) => {
 
   const removeAvatar = () => {
     setAvatar("");
+    form.setValue("avatarUrl", "none");
+  };
+
+  const onUploadImage = async (file: File) => {
+    const formData = new FormData();
+    formData.append("avatarUrl", file);
+
+    try {
+      const response = await Axios.post(
+        "/api/v1/cloud-services/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${sessionToken}`,
+          },
+        }
+      );
+      const image_url = response.data.data.image_url;
+
+      return image_url;
+    } catch (error) {
+      toast({
+        title: "Image Upload",
+        description: "Failed to upload image.",
+      });
+      return null;
+    }
   };
 
   const onSubmit = async (value: z.infer<typeof UpdateUserDataSchema>) => {
     try {
-      const response = await UpdateUser(
+      const response = await updateUser(
         params?.id as string,
         value,
         sessionToken as string
@@ -134,7 +208,7 @@ const Settings = ({ sessionToken }: { sessionToken: string }) => {
             />
           </div>
         )}
-        {avatar && (
+        {avatar && Edit && (
           <FiX
             onClick={removeAvatar}
             className="absolute cursor-pointer h-10 w-10 text-black"
@@ -155,12 +229,10 @@ const Settings = ({ sessionToken }: { sessionToken: string }) => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    <Link href="/dashboard">
-                      <GoHome />
-                    </Link>
+                    <IoArrowBackCircleOutline onClick={() => router.back()} />
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Home</p>
+                    <p>Back</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -262,6 +334,32 @@ const Settings = ({ sessionToken }: { sessionToken: string }) => {
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-md">Role</FormLabel>
+                      <Select
+                        disabled
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger disabled={!Edit}>
+                          <SelectValue placeholder={user?.data?.user?.role} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectItem value="USER">USER</SelectItem>
+                            <SelectItem value="MODERATOR">MODERATOR</SelectItem>
+                            <SelectItem value="ADMIN">ADMIN</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="description"
@@ -291,6 +389,7 @@ const Settings = ({ sessionToken }: { sessionToken: string }) => {
                     <div className="space-x-2">
                       <Button type="submit">Save</Button>
                       <Button
+                        type="button"
                         variant="destructive"
                         onClick={() => setEdit(false)}
                       >
@@ -300,7 +399,11 @@ const Settings = ({ sessionToken }: { sessionToken: string }) => {
                   </div>
                 )}
                 {!Edit && (
-                  <Button variant="default" onClick={() => setEdit(true)}>
+                  <Button
+                    type="button"
+                    variant="default"
+                    onClick={() => setEdit(true)}
+                  >
                     Edit
                   </Button>
                 )}
@@ -321,4 +424,4 @@ const Settings = ({ sessionToken }: { sessionToken: string }) => {
   );
 };
 
-export default Settings;
+export default SettingsForm;

@@ -14,21 +14,27 @@ import {
 } from "@/components/ui/tooltip";
 import Link from "next/link";
 import Error from "../Error";
-import UserData from "@/hooks/user-data";
-import Loading from "../Loading";
-import { CiSettings } from "react-icons/ci";
-import { UserImage, UserInfo } from "../UserInfo";
+import { User } from "@/types";
 import { useRouter } from "next/navigation";
+import { CiSettings } from "react-icons/ci";
+import { UserCardLoading } from "../Loading";
+import useUserData from "@/hooks/use-user-data";
+import { UserImage, UserInfo } from "../UserInfo";
+import { UseQueryResult } from "@tanstack/react-query";
 
 const Index = ({ sessionToken }: { sessionToken: string }) => {
   const router = useRouter();
+
   const {
     data: user,
     isLoading: userDataLoading,
     error: userDataError,
-  } = UserData(sessionToken, router);
+  }: UseQueryResult<{ data: { user: User } }> = useUserData(
+    sessionToken,
+    router
+  );
 
-  if (userDataLoading) return <Loading />;
+  if (userDataLoading) return <UserCardLoading />;
 
   if (userDataError) return <Error />;
 
