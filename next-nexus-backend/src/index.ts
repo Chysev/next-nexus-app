@@ -29,7 +29,7 @@ class index {
 
   private Middleware(): void {
     this.app.use(helmet());
-    this.app.use(session);
+    // this.app.use(session);
     this.app.use(nocache());
     this.app.use(express.json());
     this.app.use(morgan("dev"));

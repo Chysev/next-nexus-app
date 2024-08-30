@@ -1,3 +1,4 @@
+// Use session if you want to store something in the server side
 import crypto from "crypto";
 import RedisStore from "connect-redis";
 import redisClient from "@/lib/redisClient";

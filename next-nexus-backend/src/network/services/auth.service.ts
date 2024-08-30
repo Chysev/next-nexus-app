@@ -139,7 +139,7 @@ class AuthService {
     return new Promise((resolve, reject) => {
       passport.authenticate(
         "jwt",
-        { session: true },
+        { session: false },
         async (error: Error, user: User, info) => {
           if (error || !user) {
             reject({
