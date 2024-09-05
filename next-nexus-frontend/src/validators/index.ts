@@ -35,7 +35,7 @@ const UpdateUserDataSchema = z.object({
     })
     .optional(),
   role: z.string().optional(),
-  avatarUrl: z.string().optional(),
+  avatarUrl: z.string().optional().or(z.literal("")),
   description: z.string().optional(),
 });
 
