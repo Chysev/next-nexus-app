@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/input";
 import { RegisterSchema } from "@/validators";
 import { Button } from "@/components/ui/button";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { Register } from "@/app/api/auth/index.s";
+import { Register } from "@/app/api/auth/index.c";
 import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoadingState, useShowPasswordState } from "@/state/states";
