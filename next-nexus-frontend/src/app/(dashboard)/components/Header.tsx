@@ -17,7 +17,6 @@ import { CiSettings } from "react-icons/ci";
 import UserData from "@/hooks/use-user-data";
 import { RiAdminLine } from "react-icons/ri";
 import { IoIosLogOut } from "react-icons/io";
-import { Logout } from "@/app/api/auth/index.c";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Header = ({ sessionToken }: { sessionToken: string }) => {
@@ -26,15 +25,7 @@ const Header = ({ sessionToken }: { sessionToken: string }) => {
   const { data: user } = UserData(sessionToken, router);
 
   const LogOut = async () => {
-    const response = await Logout();
-
-    if (response.status === 200) {
-      router.push("/authorize/login");
-    }
-
-    if (response.status === 500) {
-      router.push("/authorize/login");
-    }
+    router.push("/authorize/logout");
   };
   return (
     <div className="shadow-md justify-center bg-white z-10 fixed flex w-full">
