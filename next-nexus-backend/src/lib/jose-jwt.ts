@@ -8,8 +8,7 @@ import {
   jwtVerify,
 } from "jose";
 
-const symmetricKeyBuffer = randomBytes(32);
-const symmetricKeyUint8Array = new Uint8Array(symmetricKeyBuffer);
+const symmetricKeyUint8Array = new Uint8Array(32);
 
 const alg = "RS256";
 
