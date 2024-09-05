@@ -110,22 +110,6 @@ class AuthService {
   }
 
   /**
-   * Logs out the user by clearing the session token cookie.
-   *
-   * @public
-   * @async
-   * @param {Response} res
-   * @returns {Object}
-   */
-  public async logout(res: Response) {
-    res.clearCookie("sessionToken");
-
-    return {
-      message: "Success",
-    };
-  }
-
-  /**
    * Validates and returns the user associated with the provided JWT.
    *
    * @public

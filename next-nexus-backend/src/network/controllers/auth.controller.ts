@@ -25,15 +25,6 @@ class AuthController extends Api {
     }
   };
 
-  public Logout = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const auth = await this.authService.logout(res);
-      this.send(res, auth, HttpStatusCode.Ok, "Logout Route");
-    } catch (error) {
-      next(new HttpInternalServerError("Failed to logout"));
-    }
-  };
-
   public SessionToken = async (
     req: Request,
     res: Response,

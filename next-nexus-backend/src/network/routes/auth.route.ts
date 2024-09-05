@@ -5,9 +5,10 @@ import {
   ForgotPasswordDTO,
 } from "@/validators/auth.dto";
 import { Router } from "express";
+import rateLimiter from "@/middleware/rateLimit";
 import { ExpressRouter } from "@/types/express-types";
 import RequestValidator from "@/middleware/validator";
-import { authRateLimiter } from "@/middleware/rateLimit";
+import { dataRateLimiter } from "@/middleware/rateLimit";
 import AuthController from "../controllers/auth.controller";
 
 const auth: ExpressRouter = Router();
@@ -35,7 +36,11 @@ const controller = new AuthController();
  */
 auth
   .route("/login")
-  .post(authRateLimiter, RequestValidator.validate(LoginDTO), controller.Login);
+  .post(
+    rateLimiter(dataRateLimiter),
+    RequestValidator.validate(LoginDTO),
+    controller.Login
+  );
 
 /**
  * @swagger
@@ -58,24 +63,10 @@ auth
 auth
   .route("/register")
   .post(
-    authRateLimiter,
+    rateLimiter(dataRateLimiter),
     RequestValidator.validate(RegisterDTO),
     controller.Register
   );
-
-/**
- * @swagger
- * /auth/logout:
- *   get:
- *     summary: Logout a user
- *     tags: [Auth]
- *     responses:
- *       200:
- *         description: Successful logout
- *       500:
- *         description: Internal server error
- */
-auth.route("/logout").get(controller.Logout);
 
 /**
  * @swagger
@@ -121,7 +112,7 @@ auth.route("/session-token").get(controller.SessionToken);
 auth
   .route("/forgot-password")
   .post(
-    authRateLimiter,
+    rateLimiter(dataRateLimiter),
     RequestValidator.validate(ForgotPasswordDTO),
     controller.ForgotPassword
   );
@@ -147,7 +138,7 @@ auth
 auth
   .route("/reset-password/:token")
   .post(
-    authRateLimiter,
+    rateLimiter(dataRateLimiter),
     RequestValidator.validate(ResetPasswordDTO),
     controller.ResetPassword
   );

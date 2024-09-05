@@ -1,4 +1,5 @@
 import { Router } from "express";
+import rateLimiter from "@/middleware/rateLimit";
 import RequestValidator from "@/middleware/validator";
 import { ExpressRouter } from "@/types/express-types.d";
 import { generalRateLimiter } from "@/middleware/rateLimit";
@@ -48,7 +49,9 @@ const controller = new UsersController();
  *       500:
  *         description: Internal server error
  */
-users.route("/list").get(generalRateLimiter, controller.getAllUsers);
+users
+  .route("/list")
+  .get(rateLimiter(generalRateLimiter), controller.getAllUsers);
 
 /**
  * @swagger
@@ -76,7 +79,9 @@ users.route("/list").get(generalRateLimiter, controller.getAllUsers);
  *       500:
  *         description: Internal server error
  */
-users.route("/count").get(generalRateLimiter, controller.getUsersCount);
+users
+  .route("/count")
+  .get(rateLimiter(generalRateLimiter), controller.getUsersCount);
 
 /**
  * @swagger
