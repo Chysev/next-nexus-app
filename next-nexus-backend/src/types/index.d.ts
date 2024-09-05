@@ -13,6 +13,13 @@ type JwtOptions = {
   clockTolerance?: number;
 };
 
+type RateLimiterRule = {
+  rate_limit: {
+    time: number;
+    limit: number;
+  };
+};
+
 declare module "*.json" {
   const value: any;
   export default value;
