@@ -23,7 +23,7 @@ import { useLoadingState } from "@/state/states";
 import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ForgotResetPasswordSchema } from "@/validators";
-import { ForgotResetPassword } from "@/app/api/auth/index.s";
+import { ForgotResetPassword } from "@/app/api/auth/index.c";
 
 const ForgotPasswordForm = () => {
   const { toast } = useToast();
