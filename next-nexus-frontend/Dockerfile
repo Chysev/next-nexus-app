@@ -27,10 +27,7 @@ RUN \
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
-ENV PORT 3000
-ENV HOSTNAME 0.0.0.0
-ENV BACKEND_BASE_URL http://localhost:5000
+ENV NODE_ENV=production
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 NextNexusFrontend
@@ -47,4 +44,4 @@ USER NextNexusFrontend
 
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+CMD ["npm", "run", "production"]
