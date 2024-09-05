@@ -38,7 +38,7 @@ class index {
     this.app.set("views", "views");
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
-    this.app.set("trust proxy", false);
+    this.app.set("trust proxy", 1);
 
     this.app.use(
       cors({
