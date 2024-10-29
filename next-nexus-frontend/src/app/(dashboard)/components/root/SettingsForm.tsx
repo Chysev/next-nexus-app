@@ -121,7 +121,7 @@ const SettingsForm = ({ sessionToken }: { sessionToken: string }) => {
     if (user?.data?.user?.avatarUrl) {
       setAvatar(user?.data?.user?.avatarUrl);
     }
-  }, [user?.data?.user?.avatarUrl]);
+  }, [user, form, form.reset]);
 
   const {
     // getRootProps
