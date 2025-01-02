@@ -1,29 +1,29 @@
-"use client";
+'use client';
 import {
   useEditState,
   useShowPasswordState,
   useUploadState,
-} from "@/state/states";
+} from '@/state/states';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from '@/components/ui/tooltip';
 import {
   Select,
   SelectContent,
@@ -31,30 +31,30 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { z } from "zod";
-import { User } from "@/types";
-import Axios from "@/lib/Axios";
-import { FiX } from "react-icons/fi";
-import { FaEye } from "react-icons/fa";
-import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
-import { FaEyeSlash } from "react-icons/fa";
-import { useParams } from "next/navigation";
-import { useRouter } from "next/navigation";
-import { useDropzone } from "react-dropzone";
-import { MdFileUpload } from "react-icons/md";
-import { Input } from "@/components/ui/input";
-import useUserData from "@/hooks/use-user-data";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
-import { Textarea } from "@/components/ui/textarea";
-import { UpdateUserDataSchema } from "@/validators";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { updateUser } from "@/app/api/users/index.c";
-import { UseQueryResult } from "@tanstack/react-query";
-import { IoArrowBackCircleOutline } from "react-icons/io5";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+} from '@/components/ui/select';
+import { z } from 'zod';
+import { User } from '@/types';
+import Axios from '@/lib/Axios';
+import { FiX } from 'react-icons/fi';
+import { FaEye } from 'react-icons/fa';
+import { useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { FaEyeSlash } from 'react-icons/fa';
+import { useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useDropzone } from 'react-dropzone';
+import { MdFileUpload } from 'react-icons/md';
+import { Input } from '@/components/ui/input';
+import useUserData from '@/hooks/use-user-data';
+import { Button } from '@/components/ui/button';
+import { toast } from '@/components/ui/use-toast';
+import { Textarea } from '@/components/ui/textarea';
+import { UpdateUserDataSchema } from '@/validators';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { updateUser } from '@/app/api/users/index.c';
+import { UseQueryResult } from '@tanstack/react-query';
+import { IoArrowBackCircleOutline } from 'react-icons/io5';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 
 const SettingsForm = ({ sessionToken }: { sessionToken: string }) => {
   const router = useRouter();
@@ -75,12 +75,12 @@ const SettingsForm = ({ sessionToken }: { sessionToken: string }) => {
   const form = useForm<z.infer<typeof UpdateUserDataSchema>>({
     resolver: zodResolver(UpdateUserDataSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      avatarUrl: "",
-      role: "",
-      description: "",
+      name: '',
+      email: '',
+      password: '',
+      avatarUrl: '',
+      role: '',
+      description: '',
     },
   });
 
@@ -102,7 +102,7 @@ const SettingsForm = ({ sessionToken }: { sessionToken: string }) => {
 
     if (avatarUrl) {
       setAvatar(avatarUrl);
-      form.setValue("avatarUrl", avatarUrl);
+      form.setValue('avatarUrl', avatarUrl);
     }
   };
 
@@ -111,7 +111,7 @@ const SettingsForm = ({ sessionToken }: { sessionToken: string }) => {
       form.reset({
         name: user?.data.user.name,
         email: user?.data.user.email,
-        password: "",
+        password: '',
         avatarUrl: user?.data?.user?.avatarUrl,
         role: user?.data?.user?.role,
         description: user?.data.user.description,
@@ -121,7 +121,7 @@ const SettingsForm = ({ sessionToken }: { sessionToken: string }) => {
     if (user?.data?.user?.avatarUrl) {
       setAvatar(user?.data?.user?.avatarUrl);
     }
-  }, [user, form, form.reset]);
+  }, [user, form.reset]);
 
   const {
     // getRootProps
@@ -132,21 +132,21 @@ const SettingsForm = ({ sessionToken }: { sessionToken: string }) => {
   });
 
   const removeAvatar = () => {
-    setAvatar("");
-    form.setValue("avatarUrl", "none");
+    setAvatar('');
+    form.setValue('avatarUrl', 'none');
   };
 
   const onUploadImage = async (file: File) => {
     const formData = new FormData();
-    formData.append("avatarUrl", file);
+    formData.append('avatarUrl', file);
 
     try {
       const response = await Axios.post(
-        "/api/v1/cloud-services/upload",
+        '/api/v1/cloud-services/upload',
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${sessionToken}`,
           },
         }
@@ -156,8 +156,8 @@ const SettingsForm = ({ sessionToken }: { sessionToken: string }) => {
       return image_url;
     } catch (error) {
       toast({
-        title: "Image Upload",
-        description: "Failed to upload image.",
+        title: 'Image Upload',
+        description: 'Failed to upload image.',
       });
       return null;
     }
@@ -173,15 +173,15 @@ const SettingsForm = ({ sessionToken }: { sessionToken: string }) => {
 
       if (response.status === 200) {
         toast({
-          title: "Settings",
-          description: "Information has been updated",
+          title: 'Settings',
+          description: 'Information has been updated',
         });
         setEdit(false);
       }
     } catch (error) {
       toast({
-        title: "Settings",
-        description: "Something went wrong",
+        title: 'Settings',
+        description: 'Something went wrong',
       });
     }
   };
@@ -196,7 +196,7 @@ const SettingsForm = ({ sessionToken }: { sessionToken: string }) => {
             <label htmlFor="file-upload">
               <MdFileUpload
                 className={`cursor-pointer h-10 w-10 hover:shadow-2xl hover:border rounded-full transition-all ${
-                  Edit ? "opacity-1" : "opacity-5 hover:cursor-not-allowed"
+                  Edit ? 'opacity-1' : 'opacity-5 hover:cursor-not-allowed'
                 }`}
               />
             </label>
@@ -300,9 +300,9 @@ const SettingsForm = ({ sessionToken }: { sessionToken: string }) => {
                             type={
                               Edit
                                 ? showPassword
-                                  ? "text"
-                                  : "password"
-                                : "password"
+                                  ? 'text'
+                                  : 'password'
+                                : 'password'
                             }
                             className="text-md"
                             {...field}
@@ -315,16 +315,16 @@ const SettingsForm = ({ sessionToken }: { sessionToken: string }) => {
                               <FaEyeSlash
                                 className={`${
                                   Edit
-                                    ? "opacity-1"
-                                    : "opacity-5 hover:cursor-not-allowed"
+                                    ? 'opacity-1'
+                                    : 'opacity-5 hover:cursor-not-allowed'
                                 }`}
                               />
                             ) : (
                               <FaEye
                                 className={`${
                                   Edit
-                                    ? "opacity-1"
-                                    : "opacity-5 hover:cursor-not-allowed"
+                                    ? 'opacity-1'
+                                    : 'opacity-5 hover:cursor-not-allowed'
                                 }`}
                               />
                             )}

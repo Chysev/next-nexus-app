@@ -1,24 +1,24 @@
-"use client";
+'use client';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from '@/components/ui/tooltip';
 import {
   Select,
   SelectContent,
@@ -26,23 +26,23 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { z } from "zod";
-import { User } from "@/types";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { useParams } from "next/navigation";
-import { useRouter } from "next/navigation";
-import { useEditState } from "@/state/states";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
-import { updateUser } from "@/app/api/users/index.c";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { getUserData } from "@/app/api/users/index.s";
-import { UpdateViewUserDataSchema } from "@/validators";
-import { IoArrowBackCircleOutline } from "react-icons/io5";
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+} from '@/components/ui/select';
+import { z } from 'zod';
+import { User } from '@/types';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useEditState } from '@/state/states';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { toast } from '@/components/ui/use-toast';
+import { updateUser } from '@/app/api/users/index.c';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { getUserData } from '@/app/api/users/index.s';
+import { UpdateViewUserDataSchema } from '@/validators';
+import { IoArrowBackCircleOutline } from 'react-icons/io5';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 
 const ViewUserForm = ({ sessionToken }: { sessionToken: string }) => {
   const router = useRouter();
@@ -51,7 +51,7 @@ const ViewUserForm = ({ sessionToken }: { sessionToken: string }) => {
   const { data: Edit, setData: setEdit } = useEditState();
 
   const { data: user }: UseQueryResult<{ data: User }> = useQuery({
-    queryKey: ["user", "profile"],
+    queryKey: ['user', 'profile'],
     queryFn: async () => {
       return await getUserData(params.id as string);
     },
@@ -60,9 +60,9 @@ const ViewUserForm = ({ sessionToken }: { sessionToken: string }) => {
   const form = useForm<z.infer<typeof UpdateViewUserDataSchema>>({
     resolver: zodResolver(UpdateViewUserDataSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      role: "",
+      name: '',
+      email: '',
+      role: '',
     },
   });
 
@@ -74,7 +74,7 @@ const ViewUserForm = ({ sessionToken }: { sessionToken: string }) => {
         role: user?.data.role,
       });
     }
-  }, [user, form]);
+  }, [user, form.reset]);
 
   const onSubmit = async (value: z.infer<typeof UpdateViewUserDataSchema>) => {
     try {
@@ -86,15 +86,15 @@ const ViewUserForm = ({ sessionToken }: { sessionToken: string }) => {
 
       if (response.status === 200) {
         toast({
-          title: "Action",
-          description: "Information has been updated",
+          title: 'Action',
+          description: 'Information has been updated',
         });
         setEdit(false);
       }
     } catch (error) {
       toast({
-        title: "Action",
-        description: "Something went wrong",
+        title: 'Action',
+        description: 'Something went wrong',
       });
     }
   };
