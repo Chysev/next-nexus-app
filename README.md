@@ -19,7 +19,7 @@ Next Nexus App is a comprehensive production-ready application starter template 
 - Email Service - Automated email functionality for user notifications and communication.
 - Password Recovery - User forgot password functionality to securely reset passwords.
 
-### Upcoming in version nexus.9338c
+### Upcoming in version nexus.9338c - 2025
 
 - User Permissions
 - Paypal Integration
