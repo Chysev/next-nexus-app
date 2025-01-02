@@ -74,7 +74,7 @@ const Users = ({ sessionToken }: { sessionToken: string }) => {
     if (users) {
       setFilteredUsers(users.data);
     }
-  }, [users, setFilteredUsers]);
+  }, [users, filteredUsers]);
 
   const totalPages = filteredUsers
     ? Math.ceil(filteredUsers.length / itemsPerPage)
