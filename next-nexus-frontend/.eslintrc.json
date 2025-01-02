@@ -5,7 +5,6 @@
     "no-unused-vars": "off",
     "no-undef": "warn",
     "react-hooks/rules-of-hooks": "off",
-    "react-hooks/exhaustive-deps": "off",
     "react/jsx-no-duplicate-props": "error",
     "react/jsx-key": "error",
     "react/jsx-no-undef": ["error", { "allowGlobals": false }]
