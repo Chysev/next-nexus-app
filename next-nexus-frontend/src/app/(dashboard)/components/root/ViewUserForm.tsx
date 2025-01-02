@@ -74,7 +74,7 @@ const ViewUserForm = ({ sessionToken }: { sessionToken: string }) => {
         role: user?.data.role,
       });
     }
-  }, [user, form, form.reset]);
+  }, [user?.data.name, user?.data.email, user?.data.role, form, form.reset]);
 
   const onSubmit = async (value: z.infer<typeof UpdateViewUserDataSchema>) => {
     try {

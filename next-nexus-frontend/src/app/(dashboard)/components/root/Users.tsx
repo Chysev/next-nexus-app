@@ -1,5 +1,5 @@
-"use client";
-import Link from "next/link";
+'use client';
+import Link from 'next/link';
 import {
   Table,
   TableBody,
@@ -8,13 +8,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
   Pagination,
   PaginationContent,
@@ -22,21 +22,21 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
-import Image from "next/image";
-import { User } from "@/types";
-import { TableLoading } from "../Loading";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
-import { useModalStore } from "@/state/modal.store";
-import { deleteUser } from "@/app/api/users/index.c";
-import { getAllUsers } from "@/app/api/users/index.s";
-import { UserDeleteModal } from "@/components/ui/modal";
-import { useCallback, useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+} from '@/components/ui/pagination';
+import Image from 'next/image';
+import { User } from '@/types';
+import { TableLoading } from '../Loading';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { toast } from '@/components/ui/use-toast';
+import { useModalStore } from '@/state/modal.store';
+import { deleteUser } from '@/app/api/users/index.c';
+import { getAllUsers } from '@/app/api/users/index.s';
+import { UserDeleteModal } from '@/components/ui/modal';
+import { useCallback, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const Users = ({ sessionToken }: { sessionToken: string }) => {
   const router = useRouter();
@@ -46,15 +46,15 @@ const Users = ({ sessionToken }: { sessionToken: string }) => {
   const maxPagesToShow = 5;
 
   const { closeModal } = useModalStore();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
-  const currentPage = parseInt(searchParams.get("p") || "1", 10);
+  const currentPage = parseInt(searchParams.get('p') || '1', 10);
 
   const {
     data: users,
     isLoading: usersDataLoading,
   }: UseQueryResult<{ data: User[] }> = useQuery({
-    queryKey: ["userList", "List"],
+    queryKey: ['userList', 'List'],
     queryFn: async () => await getAllUsers(),
     refetchInterval: 3000,
   });
@@ -74,7 +74,7 @@ const Users = ({ sessionToken }: { sessionToken: string }) => {
     if (users) {
       setFilteredUsers(users.data);
     }
-  }, [users]);
+  }, [users?.data]);
 
   const totalPages = filteredUsers
     ? Math.ceil(filteredUsers.length / itemsPerPage)
@@ -97,15 +97,15 @@ const Users = ({ sessionToken }: { sessionToken: string }) => {
 
       if (response.status === 200) {
         toast({
-          title: "Action",
-          description: "User has been deleted",
+          title: 'Action',
+          description: 'User has been deleted',
         });
         closeModal();
       }
     } catch (error) {
       toast({
-        title: "Action",
-        description: "Something went wrong",
+        title: 'Action',
+        description: 'Something went wrong',
       });
       closeModal();
     }
@@ -240,7 +240,7 @@ const Users = ({ sessionToken }: { sessionToken: string }) => {
                     handlePageChange((currentPage as number) - 1);
                 }}
                 className={`${
-                  currentPage === 1 ? "cursor-not-allowed text-gray-400" : ""
+                  currentPage === 1 ? 'cursor-not-allowed text-gray-400' : ''
                 }`}
               />
             </PaginationItem>
@@ -257,8 +257,8 @@ const Users = ({ sessionToken }: { sessionToken: string }) => {
                   }}
                   className={`${
                     currentPage === pageNumber
-                      ? "bg-blue-500 text-white"
-                      : "bg-white text-blue-500"
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-white text-blue-500'
                   } hover:bg-blue-100 px-3 py-1 rounded-md`}
                 >
                   {pageNumber}
@@ -297,8 +297,8 @@ const Users = ({ sessionToken }: { sessionToken: string }) => {
                 }}
                 className={`${
                   currentPage === totalPages
-                    ? "cursor-not-allowed text-gray-400"
-                    : ""
+                    ? 'cursor-not-allowed text-gray-400'
+                    : ''
                 }`}
               />
             </PaginationItem>
