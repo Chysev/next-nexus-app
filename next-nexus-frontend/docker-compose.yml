@@ -1,11 +1,1 @@
-version: "3.8"
-
-services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    environment:
-      NODE_ENV: production
+# I can't delete file on mobile eh so e edit ko nalang hehe
