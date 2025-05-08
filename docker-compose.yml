@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  backend-app:
+    build:
+      context: ./next-nexus-backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./next-nexus-backend:/app
+    restart: unless-stopped
+
+  frontend-app:
+    build:
+      context: ./next-nexus-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./next-nexus-frontend:/app
+    restart: unless-stopped
